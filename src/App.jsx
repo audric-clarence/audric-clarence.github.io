@@ -380,7 +380,7 @@ function AppContent({ age, cursorRef, heroNameRef, isAnimating, bubbles, portfol
               e.target.style.display = 'none';
             }}
           >
-            <source src={mode === 'dark' ? "/hero-2.mp4" : "/hero-1.mp4"} type="video/mp4" />
+            <source src={mode === 'dark' ? "https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4" : "https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_2mb.mp4"} type="video/mp4" />
             Your browser does not support the video tag.
           </video>
           <div className={`hero-overlay ${mode === 'light' ? 'hero-overlay-light' : ''}`}></div>
