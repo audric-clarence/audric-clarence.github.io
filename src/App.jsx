@@ -384,7 +384,7 @@ function AppContent({ age, cursorRef, heroNameRef, isAnimating, bubbles, portfol
                 : 'linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 50%, #cbd5e0 100%)';
             }}
           >
-            <source src={mode === 'dark' ? "/hero-dark.mp4" : "/hero-light.mp4"} type="video/mp4" />
+            <source src={mode === 'dark' ? "https://github.com/PierPaudric/audric-website/raw/main/public/hero-dark.mp4" : "https://github.com/PierPaudric/audric-website/raw/main/public/hero-light.mp4"} type="video/mp4" />
             Your browser does not support the video tag.
           </video>
           <div className={`hero-overlay ${mode === 'light' ? 'hero-overlay-light' : ''}`}></div>
