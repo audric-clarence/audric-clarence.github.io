@@ -367,26 +367,18 @@ function AppContent({ age, cursorRef, heroNameRef, isAnimating, bubbles, portfol
         {/* Hero Section */}
         <header id="hero" className="hero">
           {/* Video Background */}
-          <video
+          <iframe
             className="hero-video"
-            autoPlay
-            loop
-            muted
-            playsInline
-            preload="metadata"
+            src={mode === 'dark' 
+              ? "https://www.youtube.com/embed/XL-wYu6EC2E?autoplay=1&loop=1&mute=1&controls=0&showinfo=0&rel=0&playlist=XL-wYu6EC2E&modestbranding=1&iv_load_policy=3"
+              : "https://www.youtube.com/embed/7Q22DciggnY?autoplay=1&loop=1&mute=1&controls=0&showinfo=0&rel=0&playlist=7Q22DciggnY&modestbranding=1&iv_load_policy=3"
+            }
+            title="Hero Background Video"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
             key={mode}
-            onError={(e) => {
-              console.log('Video failed to load - please check Google Drive sharing settings');
-              // Fallback to a gradient background if video fails
-              e.target.style.display = 'none';
-              e.target.parentElement.style.background = mode === 'dark' 
-                ? 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)'
-                : 'linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 50%, #cbd5e0 100%)';
-            }}
-          >
-            <source src={mode === 'dark' ? "https://drive.google.com/uc?export=download&id=1eo2M-fgt3a_4c0lR8Fr2pDNBrGsHOdFi" : "https://drive.google.com/uc?export=download&id=1RpEPKD0IrlGLcRl_gnGEF3hos-nYRA0R"} type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
+          ></iframe>
           <div className={`hero-overlay ${mode === 'light' ? 'hero-overlay-light' : ''}`}></div>
           {/* Additional particles on top of hero video */}
           <div className="hero-particles-container">
