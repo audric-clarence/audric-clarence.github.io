@@ -384,7 +384,7 @@ function AppContent({ age, cursorRef, heroNameRef, isAnimating, bubbles, portfol
                 : 'linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 50%, #cbd5e0 100%)';
             }}
           >
-            <source src={mode === 'dark' ? "https://drive.google.com/uc?export=download&id=1eo2M-fgt3a_4c0lR8Fr2pDNBrGsHOdFi" : "https://drive.google.com/uc?export=download&id=1RpEPKD0IrlGLcRl_gnGEF3hos-nYRA0R"} type="video/mp4" />
+            <source src={mode === 'dark' ? "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" : "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"} type="video/mp4" />
             Your browser does not support the video tag.
           </video>
           <div className={`hero-overlay ${mode === 'light' ? 'hero-overlay-light' : ''}`}></div>
