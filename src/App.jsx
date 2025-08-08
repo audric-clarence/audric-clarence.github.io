@@ -1,0 +1,554 @@
+import { useEffect, useRef, useState, createContext, useContext } from 'react';
+import {
+  FaUser,
+  FaBriefcase,
+  FaTools,
+  FaInfoCircle,
+  FaProjectDiagram,
+  FaEnvelope,
+  FaSun,
+  FaMoon,
+} from 'react-icons/fa';
+import './App.css';
+
+// Color mode context
+const ColorModeContext = createContext();
+
+function useColorMode() {
+  return useContext(ColorModeContext);
+}
+
+function ColorModeProvider({ children }) {
+  const [mode, setMode] = useState(
+    () => localStorage.getItem('color-mode') || 'dark'
+  );
+  useEffect(() => {
+    document.body.setAttribute('data-theme', mode);
+    localStorage.setItem('color-mode', mode);
+  }, [mode]);
+  const toggle = () => setMode((m) => (m === 'dark' ? 'light' : 'dark'));
+  return (
+    <ColorModeContext.Provider value={{ mode, toggle }}>
+      {children}
+    </ColorModeContext.Provider>
+  );
+}
+
+function getAge(birthDate) {
+  const today = new Date();
+  const birth = new Date(birthDate);
+  let age = today.getFullYear() - birth.getFullYear();
+  const m = today.getMonth() - birth.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
+    age--;
+  }
+  return age;
+}
+
+const skills = [
+  'Javascript',
+  'C#',
+  'ReactJS',
+  'MySQL',
+  'TypeScript',
+  'PHP',
+  'WordPress',
+  'React Native',
+  'Firebase',
+  'Unity',
+  'Flutter',
+];
+
+const projects = [
+  {
+    name: 'IndoChili Restaurant',
+    url: 'https://www.indochili.com',
+    img: '/indochili.png',
+    icon: '/indochili-icon.png',
+    desc: 'Authentic Indonesian cuisine in Singapore, rated 4.5/5 by 8 Days Magazine. Modern, responsive restaurant website with menu, reservation, and contact features.',
+  },
+  {
+    name: 'Bright Hill Evergreen Home',
+    url: 'https://www.bheh.org',
+    img: '/bheh.png',
+    icon: '/bheh-icon.webp',
+    desc: 'Charity and eldercare organization in Singapore. Website features information on services, support, media, and volunteer opportunities.',
+  },
+  {
+    name: 'Eureka Singapore',
+    url: 'https://eurekasingapore.com.sg',
+    img: '/eureka.png',
+    icon: '/eureka-icon.png',
+    desc: 'Corporate and business solutions provider. Website highlights services, company profile, and contact information for clients in Singapore.',
+  },
+  {
+    name: `Children's Vineyard`,
+    url: 'https://childrensvineyard.com',
+    img: '/childrensvineyard.png',
+    icon: '/childrensvineyard-icon.png',
+    desc: `Educational and community-focused organization. Website provides resources, event info, and support for children and families.`,
+  },
+  {
+    name: 'Quantum Shorts',
+    url: 'https://shorts.quantumlah.org/',
+    img: '/quantum.png',
+    icon: '/quantum-logo.png',
+    desc: 'International quantum-themed short film festival and flash fiction competition. Features event info, archives, and resources for quantum creativity.',
+  },
+  {
+    name: 'Untarun',
+    url: 'https://untarun.itch.io/untarun',
+    img: '/untarun.png',
+    icon: '/untarun-logo.png',
+    desc: 'A 2D endless runner game about a boy who is trying to finish his thesis.',
+  },
+];
+
+function useParallaxCursor() {
+  const cursorRef = useRef();
+  const heroFaceRef = useRef();
+  const heroNameRef = useRef();
+  const [isAnimating, setIsAnimating] = useState(true);
+
+  useEffect(() => {
+    let mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+    let cursor = { x: mouse.x, y: mouse.y };
+    let face = { x: 0, y: 0 };
+    let name = { x: 0, y: 0 };
+    let running = true;
+
+    const onMouseMove = (e) => {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+    };
+    const onKeyDown = (e) => {
+      if (e.key === 't' || e.key === 'T') setIsAnimating((v) => !v);
+    };
+    const onClick = () => setIsAnimating(true);
+
+    function animate() {
+      if (!running) return;
+      // Cursor
+      cursor.x += (mouse.x - cursor.x) * 0.25;
+      cursor.y += (mouse.y - cursor.y) * 0.25;
+      if (cursorRef.current && isAnimating) {
+        cursorRef.current.style.left = cursor.x - 10 + 'px';
+        cursorRef.current.style.top = cursor.y - 10 + 'px';
+        cursorRef.current.style.opacity = '1';
+      } else if (cursorRef.current) {
+        cursorRef.current.style.opacity = '0';
+      }
+      // Parallax
+      const centerX = window.innerWidth / 2;
+      const centerY = window.innerHeight / 2;
+      const dx = mouse.x - centerX;
+      const dy = mouse.y - centerY;
+      face.x += (dx * 0.04 - face.x) * 0.18;
+      face.y += (dy * 0.04 - face.y) * 0.18;
+      name.x += (dx * 0.02 - name.x) * 0.18;
+      name.y += (dy * 0.02 - name.y) * 0.18;
+      if (heroFaceRef.current && isAnimating) {
+        heroFaceRef.current.style.transform = `translate(${face.x}px, ${face.y}px)`;
+      } else if (heroFaceRef.current) {
+        heroFaceRef.current.style.transform = 'none';
+      }
+      if (heroNameRef.current && isAnimating) {
+        heroNameRef.current.style.transform = `translate(${name.x}px, ${name.y}px)`;
+      } else if (heroNameRef.current) {
+        heroNameRef.current.style.transform = 'none';
+      }
+      requestAnimationFrame(animate);
+    }
+    running = true;
+    requestAnimationFrame(animate);
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('keydown', onKeyDown);
+    window.addEventListener('click', onClick);
+    return () => {
+      running = false;
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('keydown', onKeyDown);
+      window.removeEventListener('click', onClick);
+    };
+  }, [isAnimating]);
+
+  return { cursorRef, heroFaceRef, heroNameRef, isAnimating };
+}
+
+function useSectionHeaderAnimation() {
+  useEffect(() => {
+    let lastScrollY = window.scrollY;
+    const headers = document.querySelectorAll('.section-header');
+    const observer = new window.IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const goingDown = window.scrollY > lastScrollY;
+          if (entry.isIntersecting && goingDown) {
+            entry.target.classList.add('header-visible');
+            entry.target.classList.remove('header-hidden');
+          } else if (!entry.isIntersecting && !goingDown) {
+            entry.target.classList.remove('header-visible');
+            entry.target.classList.add('header-hidden');
+          }
+        });
+        lastScrollY = window.scrollY;
+      },
+      { threshold: 0.5 }
+    );
+    headers.forEach((header) => observer.observe(header));
+    return () => observer.disconnect();
+  }, []);
+}
+
+function SidebarNav() {
+  const { mode, toggle } = useColorMode();
+  const navItems = [
+    { href: '#profile', icon: <FaUser />, label: 'Profile' },
+    { href: '#experience', icon: <FaBriefcase />, label: 'Experiences' },
+    { href: '#skills', icon: <FaTools />, label: 'Skills' },
+    { href: '#about', icon: <FaInfoCircle />, label: 'About' },
+    { href: '#portfolio', icon: <FaProjectDiagram />, label: 'Portfolio' },
+    { href: '#contact', icon: <FaEnvelope />, label: 'Contact' },
+  ];
+  return (
+    <aside className="sidebar-nav">
+      <div className="sidebar-title">Audric Clarence Jovan</div>
+      <ul className="sidebar-menu">
+        {navItems.map((item) => (
+          <li key={item.href}>
+            <a
+              href={item.href}
+              className="sidebar-link"
+              title={item.label}
+              aria-label={item.label}
+            >
+              {item.icon}
+              <span className="sidebar-label">{item.label}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+      <button
+        className="color-mode-toggle"
+        onClick={toggle}
+        aria-label="Toggle color mode"
+      >
+        {mode === 'dark' ? <FaSun /> : <FaMoon />}
+      </button>
+    </aside>
+  );
+}
+
+function App() {
+  const age = getAge('2000-05-17');
+  const { cursorRef, heroFaceRef, heroNameRef, isAnimating } =
+    useParallaxCursor();
+  useSectionHeaderAnimation();
+
+  return (
+    <ColorModeProvider>
+      <div className="main-bg">
+        {/* Mouse cursor effect */}
+        <div ref={cursorRef} className="mouse-cursor"></div>
+        {/* Background particles */}
+        <div className="particles-container">
+          {[...Array(20)].map((_, i) => (
+            <div
+              key={i}
+              className="particle"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 5}s`,
+                animationPlayState: isAnimating ? 'running' : 'paused',
+              }}
+            ></div>
+          ))}
+        </div>
+        {/* Sidebar Navigation */}
+        <SidebarNav />
+        {/* Hero Section */}
+        <header className="hero">
+          <div className="hero-container">
+            <img
+              ref={heroFaceRef}
+              src="/face.jpeg"
+              alt="Audric Clarence Jovan"
+              className="hero-face"
+            />
+            <div className="hero-content">
+              <p className="hero-intro">Hi, I am</p>
+              <h1 ref={heroNameRef} className="hero-name">
+                Audric Clarence Jovan
+              </h1>
+              <p className="hero-title">I am a Web Developer 🧑‍💻</p>
+              <div className="hero-buttons">
+                <a href="/resume.pdf" download className="btn-primary">
+                  View my resume
+                </a>
+                <a href="#portfolio" className="btn-secondary">
+                  See my projects
+                </a>
+              </div>
+            </div>
+          </div>
+        </header>
+        {/* Profile Section */}
+        <section id="profile" className="profile-section">
+          <div className="section-container">
+            <h2 className="section-header">-- Profile --</h2>
+            <div className="profile-content">
+              <div className="profile-info">
+                <p>
+                  <strong>Name:</strong> Audric Clarence Jovan
+                </p>
+                <p>
+                  <strong>Age:</strong> {age}
+                </p>
+                {/* <p><strong>Current Job:</strong> Web Developer at Closely Coded Pte Ltd (Singapore)</p>
+                <p><strong>Education:</strong> Tarumanagara University</p> */}
+                <p>
+                  <strong>Degree:</strong> Bachelor's in Computer Science
+                </p>
+              </div>
+              <div className="profile-contact">
+                <h3>Reach me by:</h3>
+                <div className="contact-links">
+                  <a href="tel:+6281905127008" className="contact-link">
+                    Phone
+                  </a>
+                  <a href="mailto:audric678@gmail.com" className="contact-link">
+                    Email
+                  </a>
+                  <a
+                    href="https://www.linkedin.com/in/audric-clarence-jovan-361885134"
+                    className="contact-link"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <img
+                      src="/linkedin-logo.svg"
+                      alt="LinkedIn"
+                      className="linkedin-logo"
+                    />{' '}
+                    LinkedIn
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        {/* Experience Section */}
+        <section id="experience" className="experience-section">
+          <div className="section-container">
+            <h2 className="section-header">-- Experiences --</h2>
+            <div className="experience-list">
+              <div className="experience-card">
+                <img
+                  src="/closelycoded-icon.png"
+                  alt="Closely Coded Logo"
+                  className="experience-logo"
+                />
+                <div className="experience-content">
+                  <h3>Web Developer at Closely Coded Pte Ltd (Singapore)</h3>
+                  <p>
+                    <strong>2022 - Present</strong>
+                  </p>
+                  <p>
+                    Closely Coded is a Singapore-based digital agency
+                    specializing in web development, UI/UX design, and digital
+                    solutions for businesses. As a Web Developer, I work on
+                    building modern, scalable web applications and digital
+                    products for clients across various industries.
+                  </p>
+                </div>
+              </div>
+              <div className="experience-card">
+                <img
+                  src="/kawan-lama-icon.png"
+                  alt="Kawan Lama Logo"
+                  className="experience-logo"
+                />
+                <div className="experience-content">
+                  <h3>
+                    Full Stack Developer Intern at PT Kawan Lama Sejahtera
+                  </h3>
+                  <p>
+                    <strong>2021</strong>
+                  </p>
+                  <p>
+                    PT Kawan Lama Sejahtera is a leading industrial supply
+                    company in Indonesia, providing a wide range of products and
+                    solutions for businesses. As a Full Stack Developer Intern,
+                    I contributed to the development of internal tools and web
+                    applications, collaborating with cross-functional teams to
+                    deliver impactful solutions.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        {/* Skills Section */}
+        <section id="skills" className="skills-section">
+          <div className="section-container">
+            <h2 className="section-header">-- Skills --</h2>
+            <div className="skills-list">
+              {skills.map((skill, idx) => (
+                <span
+                  className="skill-tag"
+                  key={idx}
+                  style={{
+                    animationDelay: `${idx * 0.1}s`,
+                    animationPlayState: isAnimating ? 'running' : 'paused',
+                  }}
+                >
+                  {skill}
+                </span>
+              ))}
+            </div>
+          </div>
+        </section>
+        {/* About Section */}
+        <section id="about" className="about-section">
+          <div className="section-container">
+            <h2 className="section-header">-- About --</h2>
+            <div className="about-content">
+              <p>
+                I'm a Computer Science graduate from Tarumanagara University
+                with a passion for web development and creating innovative
+                digital solutions. I specialize in building responsive,
+                user-friendly websites and applications that deliver exceptional
+                user experiences.
+              </p>
+              {/* <div className="education">
+                <div className="education-logo">
+                  <img
+                    src="/untar-logo.png"
+                    alt="Tarumanagara University Logo"
+                    className="education-logo-img"
+                  />
+                </div>
+                <div className="education-content">
+                  <h3>Education</h3>
+                  <p>
+                    <strong>Tarumanagara University</strong>
+                  </p>
+                  <p>Bachelor's Degree in Computer Science</p>
+                </div>
+                          
+              </div> */}
+            </div>
+          </div>
+        </section>
+        {/* Portfolio Section */}
+        <section id="portfolio" className="portfolio-section">
+          <div className="section-container">
+            <h2 className="section-header">-- My Projects --</h2>
+            <div className="portfolio-list">
+              {projects.map((project, idx) => (
+                <div className="portfolio-card" key={project.name}>
+                  <a
+                    href={project.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <div className="portfolio-img-container">
+                      <img
+                        src={project.img}
+                        alt={project.name}
+                        className="portfolio-img"
+                      />
+                      <div className="portfolio-overlay">
+                        <img
+                          src={project.icon}
+                          alt={project.name + ' Icon'}
+                          className="portfolio-icon"
+                        />
+                      </div>
+                    </div>
+                    <div className="portfolio-content">
+                      <h3>{project.name}</h3>
+                      <p>{project.desc}</p>
+                      <span className="portfolio-link">Visit Website →</span>
+                    </div>
+                  </a>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+        {/* Contact Section */}
+        <section id="contact" className="contact-section">
+          <div className="section-container">
+            <h2 className="section-header">-- Contact --</h2>
+            <div className="contact-info">
+              <div className="contact-item">
+                <h3>Phone</h3>
+                <a href="tel:+6281905127008">+62 819 0512 7008</a>
+              </div>
+              <div className="contact-item">
+                <h3>Email</h3>
+                <a href="mailto:audric678@gmail.com">audric678@gmail.com</a>
+              </div>
+            </div>
+          </div>
+        </section>
+        {/* LinkedIn Section */}
+        <section className="linkedin-section">
+          <div className="section-container">
+            <div className="linkedin-card">
+              <img
+                src="/linkedin-logo.svg"
+                alt="LinkedIn Logo"
+                className="linkedin-card-logo"
+              />
+              <div className="linkedin-card-content">
+                <h3>Connect with me on LinkedIn</h3>
+                <p>
+                  Let's connect professionally! Visit my LinkedIn profile to see
+                  my latest updates, endorsements, and professional network.
+                </p>
+                <a
+                  href="https://www.linkedin.com/in/audric-clarence-jovan-361885134"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-linkedin"
+                >
+                  Visit LinkedIn Profile
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+        {/* Footer */}
+        <footer className="footer">
+          <p>
+            © {new Date().getFullYear()} Audric Clarence Jovan. All rights
+            reserved.
+          </p>
+          <p className="footer-credits">
+            Icons made by{' '}
+            <a
+              href="https://www.flaticon.com/authors/freepik"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Freepik
+            </a>{' '}
+            from{' '}
+            <a
+              href="https://www.flaticon.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              www.flaticon.com
+            </a>
+          </p>
+        </footer>
+      </div>
+    </ColorModeProvider>
+  );
+}
+
+export default App;
