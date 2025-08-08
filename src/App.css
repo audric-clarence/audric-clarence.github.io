@@ -872,7 +872,7 @@
   border: none;
   color: var(--accent-color, #6cf);
   font-size: 1.7rem;
-  margin-top: 2rem;
+  margin-top: 1rem;
   cursor: pointer;
   transition: color 0.2s, transform 0.2s;
   outline: none;
