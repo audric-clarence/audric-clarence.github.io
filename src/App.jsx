@@ -106,14 +106,12 @@ const projects = [
 
 function useParallaxCursor() {
   const cursorRef = useRef();
-  const heroFaceRef = useRef();
   const heroNameRef = useRef();
   const [isAnimating, setIsAnimating] = useState(true);
 
   useEffect(() => {
     let mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
     let cursor = { x: mouse.x, y: mouse.y };
-    let face = { x: 0, y: 0 };
     let name = { x: 0, y: 0 };
     let running = true;
 
@@ -143,15 +141,8 @@ function useParallaxCursor() {
       const centerY = window.innerHeight / 2;
       const dx = mouse.x - centerX;
       const dy = mouse.y - centerY;
-      face.x += (dx * 0.04 - face.x) * 0.18;
-      face.y += (dy * 0.04 - face.y) * 0.18;
       name.x += (dx * 0.02 - name.x) * 0.18;
       name.y += (dy * 0.02 - name.y) * 0.18;
-      if (heroFaceRef.current && isAnimating) {
-        heroFaceRef.current.style.transform = `translate(${face.x}px, ${face.y}px)`;
-      } else if (heroFaceRef.current) {
-        heroFaceRef.current.style.transform = 'none';
-      }
       if (heroNameRef.current && isAnimating) {
         heroNameRef.current.style.transform = `translate(${name.x}px, ${name.y}px)`;
       } else if (heroNameRef.current) {
@@ -172,7 +163,7 @@ function useParallaxCursor() {
     };
   }, [isAnimating]);
 
-  return { cursorRef, heroFaceRef, heroNameRef, isAnimating };
+  return { cursorRef, heroNameRef, isAnimating };
 }
 
 function useSectionHeaderAnimation() {
@@ -281,9 +272,33 @@ function SidebarNav() {
     { href: '#portfolio', icon: <FaProjectDiagram />, label: 'Portfolio' },
     { href: '#contact', icon: <FaEnvelope />, label: 'Contact' },
   ];
+
+  const handleNavClick = (e, href) => {
+    e.preventDefault();
+    const targetId = href.substring(1);
+    const targetElement = document.getElementById(targetId);
+    
+    if (targetElement) {
+      const headerOffset = 0; // No offset to position header at the very top
+      const elementPosition = targetElement.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    }
+  };
+
   return (
     <aside className="sidebar-nav">
-      <div className="sidebar-title">Audric Clarence Jovan</div>
+      <div 
+        className="sidebar-title"
+        onClick={(e) => handleNavClick(e, '#hero')}
+        style={{ cursor: 'pointer' }}
+      >
+        Audric Clarence Jovan
+      </div>
       <ul className="sidebar-menu">
         {navItems.map((item) => (
           <li key={item.href}>
@@ -292,6 +307,7 @@ function SidebarNav() {
               className="sidebar-link"
               title={item.label}
               aria-label={item.label}
+              onClick={(e) => handleNavClick(e, item.href)}
             >
               {item.icon}
               <span className="sidebar-label">{item.label}</span>
@@ -312,17 +328,26 @@ function SidebarNav() {
 
 function App() {
   const age = getAge('2000-05-17');
-  const { cursorRef, heroFaceRef, heroNameRef, isAnimating } =
+  const { cursorRef, heroNameRef, isAnimating } =
     useParallaxCursor();
   const { bubbles, portfolioRef } = useBubblyEffect();
   useSectionHeaderAnimation();
 
   return (
     <ColorModeProvider>
-      <div className="main-bg">
+      <AppContent age={age} cursorRef={cursorRef} heroNameRef={heroNameRef} isAnimating={isAnimating} bubbles={bubbles} portfolioRef={portfolioRef} />
+    </ColorModeProvider>
+  );
+}
+
+function AppContent({ age, cursorRef, heroNameRef, isAnimating, bubbles, portfolioRef }) {
+  const { mode } = useColorMode();
+  
+  return (
+    <div className="main-bg">
         {/* Mouse cursor effect */}
         <div ref={cursorRef} className="mouse-cursor"></div>
-        {/* Background particles */}
+        {/* Background particles for entire website */}
         <div className="particles-container">
           {[...Array(20)].map((_, i) => (
             <div
@@ -340,14 +365,41 @@ function App() {
         {/* Sidebar Navigation */}
         <SidebarNav />
         {/* Hero Section */}
-        <header className="hero">
+        <header id="hero" className="hero">
+          {/* Video Background */}
+          <video
+            className="hero-video"
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="metadata"
+            key={mode}
+            onError={(e) => {
+              console.log('Video failed to load:', e);
+              e.target.style.display = 'none';
+            }}
+          >
+            <source src={mode === 'dark' ? "/hero-2.mp4" : "/hero-1.mp4"} type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+          <div className={`hero-overlay ${mode === 'light' ? 'hero-overlay-light' : ''}`}></div>
+          {/* Additional particles on top of hero video */}
+          <div className="hero-particles-container">
+            {[...Array(10)].map((_, i) => (
+              <div
+                key={i}
+                className="particle"
+                style={{
+                  left: `${Math.random() * 100}%`,
+                  top: `${Math.random() * 100}%`,
+                  animationDelay: `${Math.random() * 5}s`,
+                  animationPlayState: isAnimating ? 'running' : 'paused',
+                }}
+              ></div>
+            ))}
+          </div>
           <div className="hero-container">
-            <img
-              ref={heroFaceRef}
-              src="/face.jpeg"
-              alt="Audric Clarence Jovan"
-              className="hero-face"
-            />
             <div className="hero-content">
               <p className="hero-intro">Hi, I am</p>
               <h1 ref={heroNameRef} className="hero-name">
@@ -633,8 +685,7 @@ function App() {
           </p>
         </footer>
       </div>
-    </ColorModeProvider>
-  );
-}
+    );
+  }
 
 export default App;

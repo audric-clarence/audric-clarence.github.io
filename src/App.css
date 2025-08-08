@@ -1,4 +1,8 @@
 /* Reset and base styles */
+html {
+  scroll-behavior: smooth;
+}
+
 #root,
 .main-bg {
   min-height: 100vh;
@@ -28,7 +32,7 @@
   mix-blend-mode: screen;
 }
 
-/* Background particles */
+/* Background particles for entire website */
 .particles-container {
   position: fixed;
   top: 0;
@@ -37,6 +41,17 @@
   height: 100%;
   pointer-events: none;
   z-index: 1;
+}
+
+/* Additional particles for hero section */
+.hero-particles-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 4;
 }
 
 .particle {
@@ -160,9 +175,35 @@
   justify-content: center;
   min-height: 100vh;
   width: 100%;
-  padding: 2rem 0;
   position: relative;
   z-index: 2;
+  overflow: hidden;
+  background: var(--main-bg, linear-gradient(135deg, #181c24 0%, #232a36 100%));
+}
+
+.hero-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+}
+
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(24, 28, 36, 0.7);
+  z-index: 2;
+  transition: background 0.3s ease;
+}
+
+.hero-overlay-light {
+  background: rgba(255, 255, 255, 0.7);
 }
 
 .hero-container {
@@ -172,23 +213,8 @@
   text-align: center;
   max-width: 800px;
   padding: 0 2rem;
-}
-
-.hero-face {
-  width: 200px;
-  height: 200px;
-  object-fit: cover;
-  border-radius: 50%;
-  border: 6px solid var(--accent-color, #6cf);
-  box-shadow: 0 8px 32px var(--shadow-color, rgba(0, 0, 0, 0.3));
-  margin-bottom: 2rem;
-  transition: transform 0.3s ease;
   position: relative;
-  z-index: 2;
-}
-
-.hero-face:hover {
-  transform: scale(1.05);
+  z-index: 3;
 }
 
 .hero-intro {
@@ -901,7 +927,7 @@
   pointer-events: none;
   transition: opacity 0.2s;
   position: absolute;
-  left: 110%;
+  right: 110%;
   top: 50%;
   transform: translateY(-50%);
   background: var(--sidebar-bg, rgba(24, 28, 36, 0.97));
@@ -1040,13 +1066,11 @@ body[data-theme='light'] {
 
   .hero {
     padding: 0;
-    min-height: 80vh;
+    min-height: 100vh;
+    height: 100vh;
   }
 
-  .hero-face {
-    width: 150px;
-    height: 150px;
-  }
+
 
   .hero-name {
     font-size: 2.5rem;
@@ -1140,10 +1164,7 @@ body[data-theme='light'] {
     font-size: 2rem;
   }
 
-  .hero-face {
-    width: 120px;
-    height: 120px;
-  }
+
 
   .section-header {
     font-size: 2rem;
