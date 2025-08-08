@@ -367,18 +367,26 @@ function AppContent({ age, cursorRef, heroNameRef, isAnimating, bubbles, portfol
         {/* Hero Section */}
         <header id="hero" className="hero">
           {/* Video Background */}
-          <iframe
+          <video
             className="hero-video"
-            src={mode === 'dark' 
-              ? "https://www.youtube.com/embed/XL-wYu6EC2E?autoplay=1&loop=1&mute=1&controls=0&showinfo=0&rel=0&playlist=XL-wYu6EC2E&modestbranding=1&iv_load_policy=3&vq=hd1080&disablekb=1&fs=0&color=white&cc_load_policy=0&start=0&end=0"
-              : "https://www.youtube.com/embed/7Q22DciggnY?autoplay=1&loop=1&mute=1&controls=0&showinfo=0&rel=0&playlist=7Q22DciggnY&modestbranding=1&iv_load_policy=3&vq=hd1080&disablekb=1&fs=0&color=white&cc_load_policy=0&start=0&end=0"
-            }
-            title="Hero Background Video"
-            frameBorder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="metadata"
             key={mode}
-          ></iframe>
+            onError={(e) => {
+              console.log('Video failed to load - please check file availability');
+              // Fallback to a gradient background if video fails
+              e.target.style.display = 'none';
+              e.target.parentElement.style.background = mode === 'dark' 
+                ? 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)'
+                : 'linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 50%, #cbd5e0 100%)';
+            }}
+          >
+            <source src={mode === 'dark' ? "/hero-dark.mp4" : "/hero-light.mp4"} type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
           <div className={`hero-overlay ${mode === 'light' ? 'hero-overlay-light' : ''}`}></div>
           {/* Additional particles on top of hero video */}
           <div className="hero-particles-container">
