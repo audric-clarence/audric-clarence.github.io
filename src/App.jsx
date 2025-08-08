@@ -370,8 +370,8 @@ function AppContent({ age, cursorRef, heroNameRef, isAnimating, bubbles, portfol
           <iframe
             className="hero-video"
             src={mode === 'dark' 
-              ? "https://www.youtube.com/embed/XL-wYu6EC2E?autoplay=1&loop=1&mute=1&controls=0&showinfo=0&rel=0&playlist=XL-wYu6EC2E&modestbranding=1&iv_load_policy=3"
-              : "https://www.youtube.com/embed/7Q22DciggnY?autoplay=1&loop=1&mute=1&controls=0&showinfo=0&rel=0&playlist=7Q22DciggnY&modestbranding=1&iv_load_policy=3"
+              ? "https://www.youtube.com/embed/XL-wYu6EC2E?autoplay=1&loop=1&mute=1&controls=0&showinfo=0&rel=0&playlist=XL-wYu6EC2E&modestbranding=1&iv_load_policy=3&vq=hd1080&disablekb=1&fs=0&color=white&cc_load_policy=0&start=0&end=0"
+              : "https://www.youtube.com/embed/7Q22DciggnY?autoplay=1&loop=1&mute=1&controls=0&showinfo=0&rel=0&playlist=7Q22DciggnY&modestbranding=1&iv_load_policy=3&vq=hd1080&disablekb=1&fs=0&color=white&cc_load_policy=0&start=0&end=0"
             }
             title="Hero Background Video"
             frameBorder="0"
