@@ -177,27 +177,98 @@ function useParallaxCursor() {
 
 function useSectionHeaderAnimation() {
   useEffect(() => {
-    let lastScrollY = window.scrollY;
     const headers = document.querySelectorAll('.section-header');
     const observer = new window.IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          const goingDown = window.scrollY > lastScrollY;
-          if (entry.isIntersecting && goingDown) {
+          if (entry.isIntersecting) {
             entry.target.classList.add('header-visible');
             entry.target.classList.remove('header-hidden');
-          } else if (!entry.isIntersecting && !goingDown) {
+          } else {
             entry.target.classList.remove('header-visible');
             entry.target.classList.add('header-hidden');
           }
         });
-        lastScrollY = window.scrollY;
       },
-      { threshold: 0.5 }
+      { 
+        threshold: 0.3,
+        rootMargin: '0px 0px -50px 0px'
+      }
     );
     headers.forEach((header) => observer.observe(header));
     return () => observer.disconnect();
   }, []);
+}
+
+function useBubblyEffect() {
+  const [bubbles, setBubbles] = useState([]);
+  const portfolioRef = useRef();
+  const mousePos = useRef({ x: 0, y: 0 });
+  const isHovering = useRef(false);
+  const animationId = useRef(null);
+
+  useEffect(() => {
+    const portfolio = portfolioRef.current;
+    if (!portfolio) return;
+
+    const handleMouseMove = (e) => {
+      mousePos.current = { x: e.clientX, y: e.clientY };
+    };
+
+    const handleMouseEnter = () => {
+      isHovering.current = true;
+      startBubbleAnimation();
+    };
+
+    const handleMouseLeave = () => {
+      isHovering.current = false;
+      if (animationId.current) {
+        cancelAnimationFrame(animationId.current);
+      }
+    };
+
+    const startBubbleAnimation = () => {
+      const createBubble = () => {
+        if (!isHovering.current) return;
+
+        const newBubble = {
+          id: Date.now() + Math.random(),
+          x: mousePos.current.x,
+          y: mousePos.current.y,
+          size: Math.random() * 15 + 8,
+          opacity: Math.random() * 0.6 + 0.4
+        };
+        
+        setBubbles(prev => {
+          const updatedBubbles = [...prev, newBubble];
+          return updatedBubbles.slice(-20);
+        });
+        
+        setTimeout(() => {
+          setBubbles(prev => prev.filter(bubble => bubble.id !== newBubble.id));
+        }, 2000);
+
+        animationId.current = requestAnimationFrame(createBubble);
+      };
+
+      animationId.current = requestAnimationFrame(createBubble);
+    };
+
+    portfolio.addEventListener('mousemove', handleMouseMove);
+    portfolio.addEventListener('mouseenter', handleMouseEnter);
+    portfolio.addEventListener('mouseleave', handleMouseLeave);
+
+    return () => {
+      portfolio.removeEventListener('mousemove', handleMouseMove);
+      portfolio.removeEventListener('mouseenter', handleMouseEnter);
+      portfolio.removeEventListener('mouseleave', handleMouseLeave);
+      if (animationId.current) {
+        cancelAnimationFrame(animationId.current);
+      }
+    };
+  }, []);
+
+  return { bubbles, portfolioRef };
 }
 
 function SidebarNav() {
@@ -243,6 +314,7 @@ function App() {
   const age = getAge('2000-05-17');
   const { cursorRef, heroFaceRef, heroNameRef, isAnimating } =
     useParallaxCursor();
+  const { bubbles, portfolioRef } = useBubblyEffect();
   useSectionHeaderAnimation();
 
   return (
@@ -442,9 +514,23 @@ function App() {
           </div>
         </section>
         {/* Portfolio Section */}
-        <section id="portfolio" className="portfolio-section">
+        <section id="portfolio" className="portfolio-section" ref={portfolioRef}>
           <div className="section-container">
             <h2 className="section-header">-- My Projects --</h2>
+            {/* Bubbly Effects */}
+            {bubbles.map((bubble) => (
+              <div
+                key={bubble.id}
+                className="bubble"
+                style={{
+                  left: bubble.x + 'px',
+                  top: bubble.y + 'px',
+                  width: bubble.size + 'px',
+                  height: bubble.size + 'px',
+                  opacity: bubble.opacity
+                }}
+              />
+            ))}
             <div className="portfolio-list">
               {projects.map((project, idx) => (
                 <div className="portfolio-card" key={project.name}>

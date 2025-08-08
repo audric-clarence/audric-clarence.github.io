@@ -286,12 +286,7 @@
   width: 100%;
 }
 
-.profile-section h2 {
-  font-size: 2.5rem;
-  margin-bottom: 2rem;
-  text-align: center;
-  color: var(--accent-color, #6cf);
-}
+
 
 .profile-content {
   display: flex;
@@ -337,12 +332,7 @@
   width: 100%;
 }
 
-.about-section h2 {
-  font-size: 2.5rem;
-  margin-bottom: 2rem;
-  text-align: center;
-  color: var(--accent-color, #6cf);
-}
+
 
 .about-content {
   max-width: 800px;
@@ -402,14 +392,38 @@
   padding: 4rem 0;
   background: var(--section-bg, rgba(30, 40, 60, 0.3));
   width: 100%;
+  position: relative;
+  overflow: hidden;
 }
 
-.portfolio-section h2 {
-  font-size: 2.5rem;
-  margin-bottom: 3rem;
-  text-align: center;
-  color: var(--accent-color, #6cf);
+/* Bubbly Effects */
+.bubble {
+  position: fixed;
+  background: radial-gradient(circle, rgba(108, 255, 255, 0.8) 0%, rgba(108, 255, 255, 0.3) 50%, transparent 100%);
+  border: 1px solid rgba(108, 255, 255, 0.5);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 1;
+  animation: bubbleFade 2s ease-out forwards;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 10px rgba(108, 255, 255, 0.3);
 }
+
+@keyframes bubbleFade {
+  0% {
+    transform: translate(-50%, -50%) scale(0.5);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.2);
+    opacity: 0;
+  }
+}
+
+
 
 .portfolio-list {
   display: grid;
@@ -536,12 +550,7 @@
   width: 100%;
 }
 
-.contact-section h2 {
-  font-size: 2.5rem;
-  margin-bottom: 2rem;
-  text-align: center;
-  color: var(--accent-color, #6cf);
-}
+
 
 .contact-info {
   display: flex;
@@ -568,6 +577,9 @@
   text-decoration: none;
   font-size: 1.1rem;
   transition: color 0.2s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .contact-item a:hover {
@@ -581,12 +593,7 @@
   width: 100%;
 }
 
-.experience-section h2 {
-  font-size: 2.5rem;
-  margin-bottom: 2.5rem;
-  text-align: center;
-  color: var(--accent-color, #6cf);
-}
+
 
 .experience-list {
   display: flex;
@@ -636,6 +643,54 @@
   line-height: 1.6;
 }
 
+/* Section Header Animations */
+.section-header {
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  text-align: center;
+  color: var(--accent-color, #6cf);
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.section-header::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  width: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--accent-color, #6cf), transparent);
+  transform: translateX(-50%);
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.section-header.header-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.section-header.header-visible::after {
+  width: 80%;
+}
+
+.section-header.header-hidden {
+  opacity: 0;
+  transform: translateY(-30px);
+}
+
+.section-header:hover {
+  transform: translateY(-2px);
+  text-shadow: 0 0 20px rgba(108, 255, 255, 0.3);
+}
+
+.section-header:hover::after {
+  width: 100%;
+  background: linear-gradient(90deg, transparent, var(--accent-color, #6cf), var(--accent-color, #6cf), transparent);
+}
+
 /* Skills Section */
 .skills-section {
   padding: 4rem 1rem 4rem 0rem;
@@ -643,12 +698,7 @@
   width: 100%;
 }
 
-.skills-section h2 {
-  font-size: 2.5rem;
-  margin-bottom: 2rem;
-  text-align: center;
-  color: var(--accent-color, #6cf);
-}
+
 
 .skills-list {
   display: flex;
@@ -1031,12 +1081,32 @@ body[data-theme='light'] {
   }
 
   .contact-info {
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
+    gap: 1rem;
   }
 
   .contact-item {
-    min-width: 200px;
+    min-width: 120px;
+    padding: 1rem 0.8rem;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  .contact-item a {
+    font-size: 0.9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+  }
+
+  .contact-section {
+    padding: 4rem 0;
+  }
+
+  .contact-info {
+    padding: 0 1rem;
   }
 
   .section-container {
@@ -1075,10 +1145,7 @@ body[data-theme='light'] {
     height: 120px;
   }
 
-  .profile-section h2,
-  .about-section h2,
-  .portfolio-section h2,
-  .contact-section h2 {
+  .section-header {
     font-size: 2rem;
   }
 
